@@ -31,16 +31,7 @@ QEntity *Scene::createScene() {
 
     QEntity *resultEntity = new QEntity;
 
-    Billet *billet = new Billet(resultEntity);
-
-
-    cubTransformAnimation = new QPropertyAnimation();
-    cubTransformAnimation->setTargetObject(billet->cub);
-    cubTransformAnimation->setStartValue(QVector3D(0.0f, 0.0f, 0.0f));
-    cubTransformAnimation->setEndValue(QVector3D(0.0f, 0.0f, -100.0f));
-    cubTransformAnimation->setDuration(10000);
-    cubTransformAnimation->start();
-
+    billet = new Billet(resultEntity);
 
     resultEntity->addComponent(billet->cub);
     resultEntity->addComponent(billet->cubMaterial);
@@ -56,4 +47,20 @@ QEntity *Scene::createScene() {
     lightEntity->addComponent(lightTransform);
 
     return resultEntity;
+}
+
+void Scene::runMover() {
+    if ( elapsedSteps < 1000 )
+        {
+            QVector3D delta = QVector3D(0.0f, 0.0f, -0.1f);
+            moveCube( &delta );
+            QTimer::singleShot( 10, this, &Scene::runMover );
+            elapsedSteps++;
+        }
+}
+
+void Scene::moveCube(QVector3D *delta) {
+    QVector3D trans = billet->cubTransform->translation();
+    trans = trans + *delta;
+    billet->cubTransform->setTranslation(trans);
 }

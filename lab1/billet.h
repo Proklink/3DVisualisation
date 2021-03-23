@@ -16,6 +16,8 @@ public:
     Qt3DCore::QTransform *cubTransform;
 
 
+
+
     Billet();
     Billet(QEntity *resultEntity);
     ~Billet();

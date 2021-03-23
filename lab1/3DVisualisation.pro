@@ -15,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     billet.h \
+    mainwindow.h \
     scene.h
 
 # Default rules for deployment.

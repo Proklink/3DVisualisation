@@ -22,17 +22,20 @@ public:
     QEntity *rootEntity;
     Qt3DRender::QCamera *camera;
     QOrbitCameraController *cameraController;
-    QPropertyAnimation *cubTransformAnimation;
+    int elapsedSteps;
 
-//    QEntity *lightEntity;
-//    Qt3DRender::QPointLight *pointLight;
-//    Qt3DCore::QTransform *lightTransform;
+    Billet *billet;
+
+
 
 
     Scene();
 
     ~Scene();
     QEntity *createScene();
+
+    void runMover();
+    void moveCube(QVector3D *delta);
 
 private:
 
