@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     billet.cpp \
     main.cpp \
+    mainwindow.cpp \
     scene.cpp
 
 HEADERS += \
