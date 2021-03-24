@@ -58,7 +58,7 @@ void Scene::runMover() {
         {
             QVector3D delta = QVector3D(0.0f, 0.0f, -0.1f);
             moveCube( &delta );
-            //QTimer::singleShot( 10, this, &Scene::runMover );
+            QTimer::singleShot( 10, this, &Scene::runMover );
             elapsedSteps++;
         }
 }
@@ -69,13 +69,6 @@ void Scene::moveCube(QVector3D *delta) {
     billet->cubTransform->setTranslation(trans);
 }
 
-void Scene::keyPressEvent(QKeyEvent *event)
-{
-
-    if (event->key() == 1055)
-    {
-        std::cout << "Animation has started" << std::endl;
-        runMover();
-    }
-
+void Scene::startTestAnimation() {
+    runMover();
 }

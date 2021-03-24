@@ -30,7 +30,7 @@ public:
     QEntity *rootEntity;
     Qt3DRender::QCamera *camera;
     QOrbitCameraController *cameraController;
-    int elapsedSteps;
+    int elapsedSteps = 0;
 
     Billet *billet;
 
@@ -43,8 +43,10 @@ public:
 
     void moveCube(QVector3D *delta);
 
+    void startTestAnimation();
+
 private slots:
-    void keyPressEvent(QKeyEvent *event);
+
     void runMover();
 
 

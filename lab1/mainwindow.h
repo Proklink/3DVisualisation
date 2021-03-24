@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QIntValidator>
 #include "scene.h"
+#include <QKeyEvent>
 
 using namespace Qt3DExtras;
 using namespace Qt3DCore;
@@ -43,7 +44,12 @@ private:
     QLabel *valueT;
     QLabel *step;
 
+    Scene *scene;
+
     void setQSliderRange(QSlider *slider, int min, int max);
+
+private slots:
+    //void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_H
