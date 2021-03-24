@@ -54,7 +54,7 @@ void Scene::runMover() {
         {
             QVector3D delta = QVector3D(0.0f, 0.0f, -0.1f);
             moveCube( &delta );
-            QTimer::singleShot( 10, this, &Scene::runMover );
+            //QTimer::singleShot( 10, this, &Scene::runMover );
             elapsedSteps++;
         }
 }
