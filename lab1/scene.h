@@ -3,6 +3,7 @@
 
 #include "billet.h"
 
+#include <QObject>
 #include <QGuiApplication>
 #include <Qt3DExtras/Qt3DWindow>
 #include <Qt3DCore>
@@ -11,12 +12,17 @@
 #include <Qt3DExtras/QPhongMaterial>
 #include <Qt3DExtras/QOrbitCameraController>
 #include <QPushButton>
+#include <QTimer>
+#include <iostream>
 
 using namespace Qt3DExtras;
 using namespace Qt3DCore;
 
-class Scene
+
+class Scene : public QObject
 {
+    Q_OBJECT
+
 public:
     Qt3DWindow view;
     QEntity *rootEntity;
@@ -26,18 +32,20 @@ public:
 
     Billet *billet;
 
-
-
+    QTimer *tmr;
 
     Scene();
 
-    ~Scene();
+    virtual ~Scene();
     QEntity *createScene();
 
-    void runMover();
     void moveCube(QVector3D *delta);
 
-private:
+private slots:
+    void keyPressEvent(QKeyEvent *event);
+    void runMover();
+
+
 
 };
 

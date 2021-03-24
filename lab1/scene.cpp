@@ -1,6 +1,6 @@
 #include "scene.h"
 
-Scene::Scene()
+Scene::Scene() : QObject()
 {
     rootEntity = createScene();
 
@@ -15,6 +15,10 @@ Scene::Scene()
     cameraController->setLinearSpeed(50.0f);
 
     view.setRootEntity(rootEntity);
+
+    tmr = new QTimer();
+
+    QObject::connect(tmr, SIGNAL(timeout()), this, SLOT(runMover()));
 }
 
 Scene::~Scene() {
@@ -63,4 +67,15 @@ void Scene::moveCube(QVector3D *delta) {
     QVector3D trans = billet->cubTransform->translation();
     trans = trans + *delta;
     billet->cubTransform->setTranslation(trans);
+}
+
+void Scene::keyPressEvent(QKeyEvent *event)
+{
+
+    if (event->key() == 1055)
+    {
+        std::cout << "Animation has started" << std::endl;
+        runMover();
+    }
+
 }
