@@ -11,6 +11,7 @@
 #include <Qt3DExtras/QPhongMaterial>
 #include <Qt3DExtras/QOrbitCameraController>
 #include <QPushButton>
+#include <QTimer>
 
 using namespace Qt3DExtras;
 using namespace Qt3DCore;
