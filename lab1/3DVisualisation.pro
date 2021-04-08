@@ -10,12 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     billet.cpp \
+    knife.cpp \
     main.cpp \
     mainwindow.cpp \
     scene.cpp
 
 HEADERS += \
     billet.h \
+    knife.h \
     mainwindow.h \
     scene.h
 

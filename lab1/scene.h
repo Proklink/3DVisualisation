@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "billet.h"
+#include "knife.h"
 
 #include <QObject>
 #include <QGuiApplication>
@@ -26,27 +27,26 @@ class Scene : public QObject
     Q_OBJECT
 
 public:
-    Qt3DWindow view;
     QEntity *rootEntity;
+
+    Qt3DWindow view;
     Qt3DRender::QCamera *camera;
     QOrbitCameraController *cameraController;
-    int elapsedSteps = 0;
 
     Billet *billet;
+    Knife *knife;
 
     QTimer *tmr;
+    int elapsedSteps = 0;
 
     Scene();
-
     virtual ~Scene();
+
     QEntity *createScene();
-
-    void moveCube(QVector3D *delta);
-
+    void moveKnife(QVector3D *delta);
     void startTestAnimation();
 
 private slots:
-
     void runMover();
 
 
