@@ -16,15 +16,11 @@ using namespace Qt3DExtras;
 
 class Billet
 {
-private:
+public:
     //сущности мелких кубиков
     QVector <QVector<QVector<QEntity *>>> billet;
 
     int xSize, ySize, zSize;
-
-public:
-
-
 
 
     Billet();

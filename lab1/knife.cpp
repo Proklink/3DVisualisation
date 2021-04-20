@@ -4,19 +4,21 @@ Knife::Knife(QEntity *resultEntity)
 {
     knifeEntity = new QEntity(resultEntity);
 
-    QCuboidMesh *knife = new QCuboidMesh;
-    knife->setXExtent(4);
-    knife->setYExtent(10);
-    knife->setZExtent(2);
+    knifeFigure = new QCuboidMesh;
+    knifeFigure->setXExtent(1);
+    knifeFigure->setYExtent(5);
+    knifeFigure->setZExtent(0.2);
+
+    basePosition = QVector3D(0.0f - knifeFigure->xExtent() / 2, 0.0f +  knifeFigure->yExtent() / 2 + 6, 0.0f + knifeFigure->zExtent() / 2);
 
     knifeTransform = new Qt3DCore::QTransform();
-    knifeTransform->setTranslation(QVector3D(-26.0f, 9.0f, 0.0f));
+    knifeTransform->setTranslation(basePosition);
 
     QPhongMaterial *knifeMaterial = new QPhongMaterial();
     knifeMaterial->setDiffuse(QColor(QRgb(0x525252)));
 
     knifeEntity->addComponent(knifeMaterial);
-    knifeEntity->addComponent(knife);
+    knifeEntity->addComponent(knifeFigure);
     knifeEntity->addComponent(knifeTransform);
 
 }

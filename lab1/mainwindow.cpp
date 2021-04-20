@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     view_widget->setMinimumSize(600, 800);
     setMinimumSize(800, 800);
 
-    //scene->startTestAnimation();
+    scene->startTestAnimation();
 }
 
 void MainWindow::setQSliderRange(QSlider *slider, int min, int max) {

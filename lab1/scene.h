@@ -3,7 +3,9 @@
 
 #include "billet.h"
 #include "knife.h"
+#include "animationpart.h"
 
+#include <QtMath>
 #include <QObject>
 #include <QGuiApplication>
 #include <Qt3DExtras/Qt3DWindow>
@@ -37,14 +39,30 @@ public:
     Knife *knife;
 
     QTimer *tmr;
+
+    //////////////////////////////////////
+    //// knife animation data
     int elapsedSteps = 0;
+    QVector<AnimationPart *> animationParts;
+    int currentPart = 0;
+
+    float discretShift = 0.05f;
+
+    int xStart, xEnd, yStart, yEnd, zStart, zEnd;
+    //////////////////////////////////////
 
     Scene();
     virtual ~Scene();
 
     QEntity *createScene();
     void moveKnife(QVector3D *delta);
+
+    void prepareIntro();
+    void backToStart();
+    void checkIntersects();
     void startTestAnimation();
+    void createAnimationParts();
+    void setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
 
 private slots:
     void runMover();

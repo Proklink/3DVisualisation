@@ -16,8 +16,9 @@ private:
     QEntity *knifeEntity;
 
 public:
-     Qt3DCore::QTransform *knifeTransform;
-
+    Qt3DCore::QTransform *knifeTransform;
+    QCuboidMesh *knifeFigure;
+    QVector3D basePosition;
 
     Knife(QEntity *resultEntity);
     ~Knife();
