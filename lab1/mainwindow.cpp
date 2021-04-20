@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(tZad, &QSlider::valueChanged,
             valueT, static_cast<void (QLabel::*)(int)>(&QLabel::setNum));
 
-    Scene *scene = new Scene();
+    scene = new Scene();
     view_widget = QWidget::createWindowContainer(&(scene->view));
 
     layout->addLayout(layoutX);
@@ -66,9 +66,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     view_widget->setMinimumSize(600, 800);
     setMinimumSize(800, 800);
+
+    scene->startTestAnimation();
 }
 
 void MainWindow::setQSliderRange(QSlider *slider, int min, int max) {
     slider->setMinimum(min);
     slider->setMaximum(max);
 }
+
+//void MainWindow::keyPressEvent(QKeyEvent *event)
+//{
+
+//    if (event->key() == 1055)
+//    {
+//        std::cout << "Animation has started" << std::endl;
+//        scene->startTestAnimation();
+//    }
+
+//}
