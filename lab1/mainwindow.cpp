@@ -1,73 +1,108 @@
 #include "mainwindow.h"
+#include <QSpacerItem>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
-      xMax(new QSlider(Qt::Horizontal, this)),
-      yMax(new QSlider(Qt::Horizontal, this)),
-      zMax(new QSlider(Qt::Horizontal, this)),
-      tZad(new QSlider(Qt::Horizontal, this)),
       layoutX(new QHBoxLayout()),
       layoutY(new QHBoxLayout()),
       layoutZ(new QHBoxLayout()),
-      layoutT(new QHBoxLayout()),
       layoutStep(new QHBoxLayout()),
-      stepEdit(new QLineEdit("1")),
+      layoutSpeed(new QHBoxLayout()),
+      layout(new QVBoxLayout(this)),
       xSymbol(new QLabel("x")),
       ySymbol(new QLabel("y")),
       zSymbol(new QLabel("z")),
-      tSymbol(new QLabel("t")),
-      valueX(new QLabel("0")),
-      valueY(new QLabel("0")),
-      valueZ(new QLabel("0")),
-      valueT(new QLabel("0")),
-      step(new QLabel("Step:"))
+      speedLabel(new QLabel("Speed")),
+      step(new QPushButton("Step")),
+      start(new QPushButton("Start")),
+      stop(new QPushButton("Stop")),
+      xStart(new QComboBox()),
+      xFinish(new QComboBox()),
+      yStart(new QComboBox()),
+      yFinish(new QComboBox()),
+      zStart(new QComboBox()),
+      zFinish(new QComboBox()),
+      speedCombobox(new QComboBox()),
+      scene(new Scene)
 {
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    setQSliderRange(xMax, 3, 20);
-    setQSliderRange(yMax, 1, 4);
-    setQSliderRange(zMax, 1, 2);
-    setQSliderRange(tZad, 1, 30000);
+    xStart->addItems(GetItems(xSize, 0));
+    xFinish->addItems(GetItems(xSize, 0));
+    yStart->addItems(GetItems(ySize, 0));
+    yFinish->addItems(GetItems(ySize, 0));
+    zStart->addItems(GetItems(zSize, 0));
+    zFinish->addItems(GetItems(zSize, 0));
+    speedCombobox->addItem(QString::number(0.05f));
+    speedCombobox->addItem(QString::number(0.01f));
+    speedCombobox->addItem(QString::number(1.0f));
 
-    stepEdit->setValidator(new QIntValidator(0, 99, this));
+    xStart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    xFinish->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    yStart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    yFinish->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    zStart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    zFinish->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 
     layoutX->addWidget(xSymbol);
-    layoutX->addWidget(xMax);
-    layoutX->addWidget(valueX);
+    layoutX->addWidget(xStart);
+    layoutX->addWidget(xFinish);
+    layoutX->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
     layoutY->addWidget(ySymbol);
-    layoutY->addWidget(yMax);
-    layoutY->addWidget(valueY);
+    layoutY->addWidget(yStart);
+    layoutY->addWidget(yFinish);
+    layoutY->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
     layoutZ->addWidget(zSymbol);
-    layoutZ->addWidget(zMax);
-    layoutZ->addWidget(valueZ);
-    layoutT->addWidget(tSymbol);
-    layoutT->addWidget(tZad);
-    layoutT->addWidget(valueT);
+    layoutZ->addWidget(zStart);
+    layoutZ->addWidget(zFinish);
+    layoutZ->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
     layoutStep->addWidget(step);
-    layoutStep->addWidget(stepEdit);
+    layoutStep->addWidget(start);
+    layoutStep->addWidget(stop);
+    layoutSpeed->addWidget(speedLabel);
+    layoutSpeed->addWidget(speedCombobox);
+    layoutSpeed->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
-    connect(xMax, &QSlider::valueChanged,
-            valueX, static_cast<void (QLabel::*)(int)>(&QLabel::setNum));
-    connect(yMax, &QSlider::valueChanged,
-            valueY, static_cast<void (QLabel::*)(int)>(&QLabel::setNum));
-    connect(zMax, &QSlider::valueChanged,
-            valueZ, static_cast<void (QLabel::*)(int)>(&QLabel::setNum));
-    connect(tZad, &QSlider::valueChanged,
-            valueT, static_cast<void (QLabel::*)(int)>(&QLabel::setNum));
+    connect(start, &QPushButton::clicked, this, &MainWindow::StartButtonClicked);
 
-    scene = new Scene();
     view_widget = QWidget::createWindowContainer(&(scene->view));
 
     layout->addLayout(layoutX);
     layout->addLayout(layoutY);
     layout->addLayout(layoutZ);
-    layout->addLayout(layoutT);
+    layout->addLayout(layoutSpeed);
     layout->addLayout(layoutStep);
     layout->addWidget(view_widget);
 
     view_widget->setMinimumSize(600, 800);
     setMinimumSize(800, 800);
 
-    scene->startTestAnimation();
+    connect(start, &QPushButton::clicked, this, &MainWindow::StartButtonClicked);
+    connect(stop, &QPushButton::clicked, this, &MainWindow::stopClicked);
+}
+
+QStringList MainWindow::GetItems(int max, int min)
+{
+    QStringList list;
+    for(int i = min; i <= max; ++i)
+        list.append(QString::number(i));
+
+    return list;
+}
+
+void MainWindow::StartButtonClicked()
+{
+    scene->startTestAnimation(xStart->currentText().toInt(),
+                              xFinish->currentText().toInt(),
+                              yStart->currentText().toInt(),
+                              yFinish->currentText().toInt(),
+                              zStart->currentText().toInt(),
+                              zFinish->currentText().toInt());
+    scene->discretShift = speedCombobox->currentText().toInt();
+}
+
+void MainWindow::stopClicked() {
+    //emit signal for timer
+    scene->knife->knifeTransform->setTranslation(scene->knife->basePosition);
 }
 
 void MainWindow::setQSliderRange(QSlider *slider, int min, int max) {
@@ -75,13 +110,3 @@ void MainWindow::setQSliderRange(QSlider *slider, int min, int max) {
     slider->setMaximum(max);
 }
 
-//void MainWindow::keyPressEvent(QKeyEvent *event)
-//{
-
-//    if (event->key() == 1055)
-//    {
-//        std::cout << "Animation has started" << std::endl;
-//        scene->startTestAnimation();
-//    }
-
-//}

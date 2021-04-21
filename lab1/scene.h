@@ -60,15 +60,12 @@ public:
     void prepareIntro();
     void backToStart();
     void checkIntersects();
-    void startTestAnimation();
+    void startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
     void createAnimationParts();
     void setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
 
 private slots:
     void runMover();
-
-
-
 };
 
 #endif // SCENE_H
