@@ -46,7 +46,7 @@ public:
     QVector<AnimationPart *> animationParts;
     int currentPart = 0;
 
-    float discretShift = 0.05f;
+    float discretShift = 0.1f;
 
     int xStart, xEnd, yStart, yEnd, zStart, zEnd;
     //////////////////////////////////////
@@ -58,9 +58,9 @@ public:
     void moveKnife(QVector3D *delta);
 
     void prepareIntro();
-    void backToStart();
+    void backToStart(int xStart, int xEnd, int zStart, int zEnd);
     void checkIntersects();
-    void startTestAnimation();
+    void startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
     void createAnimationParts();
     void setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
 

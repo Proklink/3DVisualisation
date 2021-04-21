@@ -7,7 +7,7 @@ Knife::Knife(QEntity *resultEntity)
     knifeFigure = new QCuboidMesh;
     knifeFigure->setXExtent(1);
     knifeFigure->setYExtent(5);
-    knifeFigure->setZExtent(0.2);
+    knifeFigure->setZExtent(1);
 
     basePosition = QVector3D(0.0f - knifeFigure->xExtent() / 2, 0.0f +  knifeFigure->yExtent() / 2 + 6, 0.0f + knifeFigure->zExtent() / 2);
 
