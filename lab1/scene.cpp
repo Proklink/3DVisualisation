@@ -22,6 +22,7 @@ Scene::Scene() : QObject()
     tmr = new QTimer();
 
     QObject::connect(tmr, SIGNAL(timeout()), this, SLOT(runMover()));
+    QObject::connect(this, SIGNAL(stopTmr()), tmr, SLOT(stop()));
 }
 
 Scene::~Scene() {
@@ -225,6 +226,25 @@ void Scene::runMover() {
         }
     }
 }
+
+void Scene::runStepMover() {
+    AnimationPart *animPart = animationParts[currentPart];
+    int reqSteps = abs(animPart->end - animPart->start) / discretShift;
+
+    if ( elapsedSteps < reqSteps )
+        {
+            moveKnife( &animPart->delta );
+            elapsedSteps++;
+        }
+    else {
+        if (currentPart < animationParts.size() - 1) {
+            elapsedSteps = 0;
+            currentPart++;
+        }
+    }
+}
+
+
 
 //метод для перемещения объекта
 void Scene::moveKnife(QVector3D *delta) {
