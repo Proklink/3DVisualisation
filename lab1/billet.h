@@ -8,6 +8,7 @@
 #include <Qt3DExtras/QMetalRoughMaterial>
 #include <Qt3DExtras/QMorphPhongMaterial>
 #include <Qt3DExtras/QPerVertexColorMaterial>
+#include "Storage.h"
 
 #include <QVector>
 
@@ -19,9 +20,6 @@ class Billet
 public:
     //сущности мелких кубиков
     QVector <QVector<QVector<QEntity *>>> billet;
-
-    int xSize, ySize, zSize;
-
 
     Billet();
     Billet(QEntity *resultEntity);

@@ -255,7 +255,8 @@ void Scene::moveKnife(QVector3D *delta) {
 }
 
 void Scene::startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
-    setAnimationBounds(xStart, xEnd, yStart, yEnd, zStart, zEnd );
+    setAnimationBounds(xStart, xEnd, yStart, yEnd, zStart, zEnd);
+
     createAnimationParts();
     runMover();
 }

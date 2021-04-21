@@ -17,6 +17,7 @@ SOURCES += \
     scene.cpp
 
 HEADERS += \
+    Storage.h \
     animationpart.h \
     billet.h \
     knife.h \

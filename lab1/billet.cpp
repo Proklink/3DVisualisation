@@ -1,17 +1,11 @@
 #include "billet.h"
 
 Billet::Billet()
-{
-
-}
+{}
 
 
 Billet::Billet(QEntity *resultEntity)
 {
-    xSize = 25;
-    ySize = 5;
-    zSize = 15;
-
     //создаем мелкие кубики
     for (int y = 0; y < ySize; y++) {
         QVector<QVector<QEntity *>> zxvector;

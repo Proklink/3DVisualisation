@@ -74,6 +74,7 @@ private slots:
 signals:
     void stopTmr();
 
+
 };
 
 #endif // SCENE_H

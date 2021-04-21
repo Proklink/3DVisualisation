@@ -2,16 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QComboBox>
 #include <QPushButton>
-#include <QLineEdit>
 #include <QLayout>
-#include <QSlider>
 #include <QRadioButton>
 #include <Qt3DExtras>
 #include <QLabel>
 #include <QIntValidator>
-#include "scene.h"
 #include <QKeyEvent>
+#include "scene.h"
+#include "Storage.h"
 
 using namespace Qt3DExtras;
 using namespace Qt3DCore;
@@ -23,33 +23,37 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 private:
-    QSlider* xMax;
-    QSlider* yMax;
-    QSlider* zMax;
-    QSlider* tZad;
     QWidget *view_widget;
     QHBoxLayout *layoutX;
     QHBoxLayout *layoutY;
     QHBoxLayout *layoutZ;
-    QHBoxLayout *layoutT;
     QHBoxLayout *layoutStep;
-    QLineEdit *stepEdit;
+    QHBoxLayout *layoutSpeed;
+    QVBoxLayout *layout;
     QLabel *xSymbol;
     QLabel *ySymbol;
     QLabel *zSymbol;
-    QLabel *tSymbol;
-    QLabel *valueX;
-    QLabel *valueY;
-    QLabel *valueZ;
-    QLabel *valueT;
-    QLabel *step;
+    QLabel *speedLabel;
+    QPushButton *step;
+    QPushButton *start;
+    QPushButton *stop;
+    QComboBox *xStart;
+    QComboBox *xFinish;
+    QComboBox *yStart;
+    QComboBox *yFinish;
+    QComboBox *zStart;
+    QComboBox *zFinish;
+    QComboBox *speedCombobox;
 
     Scene *scene;
 
     void setQSliderRange(QSlider *slider, int min, int max);
+private:
+    QStringList GetItems(int max, int min);
 
 private slots:
-    //void keyPressEvent(QKeyEvent *event);
+    void StartButtonClicked();
+    void stopClicked();
 };
 
 #endif // MAINWINDOW_H
