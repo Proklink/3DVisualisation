@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     view_widget->setMinimumSize(600, 800);
     setMinimumSize(800, 800);
 
+
     connect(start, &QPushButton::clicked, this, &MainWindow::StartButtonClicked);
     connect(stop, &QPushButton::clicked, this, &MainWindow::stopClicked);
 }
@@ -103,6 +104,7 @@ void MainWindow::StartButtonClicked()
 void MainWindow::stopClicked() {
     //emit signal for timer
     scene->knife->knifeTransform->setTranslation(scene->knife->basePosition);
+
 }
 
 void MainWindow::setQSliderRange(QSlider *slider, int min, int max) {

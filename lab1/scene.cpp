@@ -10,6 +10,7 @@ Scene::Scene() : QObject()
     camera->setPosition(QVector3D(12.5f, 20.0f, 40.0f));
     camera->setViewCenter(QVector3D(12.5f, 0.0f, 7.5f));
 
+
     //создаем возможность крутить камерой (здесь надо что то поменять, чтобы передвигать камерой можно было интуитивно)
     cameraController = new QOrbitCameraController(rootEntity);
     cameraController->setCamera(camera);
@@ -21,6 +22,7 @@ Scene::Scene() : QObject()
     tmr = new QTimer();
 
     QObject::connect(tmr, SIGNAL(timeout()), this, SLOT(runMover()));
+    QObject::connect(this, SIGNAL(stopTmr()), tmr, SLOT(stop()));
 }
 
 Scene::~Scene() {
@@ -83,14 +85,14 @@ void Scene::setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int z
 void Scene::prepareIntro() {
     AnimationPart *animPart = new AnimationPart(
                                                 QVector3D(discretShift, 0.0f, 0.0f),
-                                                knife->knifeTransform->translation().x(),
+                                                knife->knifeTransform->translation().x() + knife->knifeFigure->xExtent() / 2,
                                                 xStart );
     animationParts.push_back(animPart);
 
     animPart = new AnimationPart(
                                  QVector3D(0.0f, 0.0f, discretShift),
                                  knife->knifeTransform->translation().z(),
-                                 zStart + 0.5f);
+                                 zStart - 1);
     animationParts.push_back(animPart);
 
     animPart = new AnimationPart(
@@ -100,7 +102,7 @@ void Scene::prepareIntro() {
     animationParts.push_back(animPart);
 }
 
-void Scene::backToStart() {
+void Scene::backToStart(int xStart, int xEnd, int zStart, int zEnd) {
     AnimationPart *animPart = new AnimationPart(
                                                 QVector3D(-discretShift, 0.0f, 0.0f),
                                                 xStart,
@@ -121,73 +123,86 @@ void Scene::createAnimationParts() {
 
     AnimationPart *animPart;
 
-    animPart = new AnimationPart(
-                                 QVector3D(0.0f, -discretShift, 0.0f),
-                                 knife->knifeTransform->translation().y(),
-                                 knife->knifeTransform->translation().y() - 1);
-    animationParts.push_back(animPart);
+    for (int y = yStart; y > yEnd - 1; y--) {
 
-    for (int z = 0; z < abs(zEnd - zStart); z++) {
-        float xDiscretShift;
-
-        //сначала идем в одну сторону, затем в другую
-        if ((z % 2) == 0)
-            xDiscretShift = discretShift;
-        else
-            xDiscretShift = -discretShift;
-
-        //проходимся ножом по линии x
         animPart = new AnimationPart(
-                                     QVector3D(xDiscretShift, 0.0f, 0.0f),
-                                     xStart,
-                                     xEnd);
+                                     QVector3D(0.0f, -discretShift, 0.0f),
+                                     0,
+                                     1);
         animationParts.push_back(animPart);
 
-        if (z != abs(zEnd - zStart) - 1) {
+        for (int z = 0; z < abs(zEnd - zStart) + 1; z++) {
+            float xDiscretShift;
 
-            //поднимаем нож
+            //сначала идем в одну сторону, затем в другую
+            if ((z % 2) == 0)
+                xDiscretShift = discretShift;
+            else
+                xDiscretShift = -discretShift;
+
+            //проходимся ножом по линии x
             animPart = new AnimationPart(
-                                         QVector3D(0.0f, discretShift, 0.0f),
-                                         knife->knifeTransform->translation().y(),
-                                         knife->knifeTransform->translation().y() + 1);
+                                         QVector3D(xDiscretShift, 0.0f, 0.0f),
+                                         xStart,
+                                         xEnd);
             animationParts.push_back(animPart);
 
-            //передвигаем  нож
-            animPart = new AnimationPart(
-                                         QVector3D(0.0f, 0.0f, discretShift),
-                                         knife->knifeTransform->translation().z(),
-                                         knife->knifeTransform->translation().z() + 1);
-            animationParts.push_back(animPart);
+            if (z != abs(zEnd - zStart)) {
 
-            //опускаем нож
-            animPart = new AnimationPart(
-                                         QVector3D(0.0f, -discretShift, 0.0f),
-                                         knife->knifeTransform->translation().y(),
-                                         knife->knifeTransform->translation().y() - 1);
-            animationParts.push_back(animPart);
+                //поднимаем нож
+                animPart = new AnimationPart(
+                                             QVector3D(0.0f, discretShift, 0.0f),
+                                             knife->knifeTransform->translation().y(),
+                                             knife->knifeTransform->translation().y() + 1);
+                animationParts.push_back(animPart);
+
+                //передвигаем  нож
+                animPart = new AnimationPart(
+                                             QVector3D(0.0f, 0.0f, discretShift),
+                                             knife->knifeTransform->translation().z(),
+                                             knife->knifeTransform->translation().z() + 1);
+                animationParts.push_back(animPart);
+
+                //опускаем нож
+                animPart = new AnimationPart(
+                                             QVector3D(0.0f, -discretShift, 0.0f),
+                                             knife->knifeTransform->translation().y(),
+                                             knife->knifeTransform->translation().y() - 1);
+                animationParts.push_back(animPart);
+            }
+            else {
+                if (z % 2 == 0)
+                    backToStart(xStart, xEnd, zStart, zEnd);
+                else
+                    backToStart(0, 0, zStart, zEnd);
+            }
+
         }
-        else
-           backToStart();
-
     }
+
 
 }
 
 
 void Scene::checkIntersects() {
     QVector3D trans = knife->knifeTransform->translation();
-    float xKnifePos = trans.x() + knife->knifeFigure->xExtent() / 2;
-    float yKnifePos = trans.y() - knife->knifeFigure->yExtent() / 2 + 0.2f;
+    float xKnifePos;
+    if (animationParts[currentPart]->delta.x() > 0)
+        xKnifePos = trans.x() - knife->knifeFigure->xExtent() / 2;
+    else
+        xKnifePos = trans.x() + knife->knifeFigure->xExtent() / 2 - 0.1f;
+    float yKnifePos = trans.y() - knife->knifeFigure->yExtent() / 2 + 0.5;
     float zKnifePos = trans.z();
 
-    if (((xKnifePos >= xStart) && (xKnifePos <= xEnd)) &&
-        ((zKnifePos >= zStart) && (zKnifePos <= zEnd)) &&
-            ((yKnifePos <= yStart) && (yKnifePos >= yEnd)))
+    if (((xKnifePos >= xStart - 1) && (xKnifePos <= xEnd)) &&
+        ((zKnifePos >= zStart - 1) && (zKnifePos <= zEnd)) &&
+            ((yKnifePos <= yStart) && (yKnifePos >= yEnd - 1)))
     {
         QEntity *vexelEntity = billet->billet[(int)yKnifePos][(int)zKnifePos][(int)xKnifePos];
         vexelEntity->setEnabled(false);
 
     }
+
 }
 
 
@@ -212,6 +227,25 @@ void Scene::runMover() {
     }
 }
 
+void Scene::runStepMover() {
+    AnimationPart *animPart = animationParts[currentPart];
+    int reqSteps = abs(animPart->end - animPart->start) / discretShift;
+
+    if ( elapsedSteps < reqSteps )
+        {
+            moveKnife( &animPart->delta );
+            elapsedSteps++;
+        }
+    else {
+        if (currentPart < animationParts.size() - 1) {
+            elapsedSteps = 0;
+            currentPart++;
+        }
+    }
+}
+
+
+
 //метод для перемещения объекта
 void Scene::moveKnife(QVector3D *delta) {
     QVector3D trans = knife->knifeTransform->translation();
@@ -222,6 +256,7 @@ void Scene::moveKnife(QVector3D *delta) {
 
 void Scene::startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
     setAnimationBounds(xStart, xEnd, yStart, yEnd, zStart, zEnd);
+
     createAnimationParts();
     runMover();
 }
