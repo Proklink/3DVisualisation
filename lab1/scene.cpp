@@ -25,6 +25,8 @@ Scene::Scene() : QObject()
     QObject::connect(this, SIGNAL(stopTmr()), tmr, SLOT(stop()));
 }
 
+
+
 Scene::~Scene() {
     if (camera)
         delete camera;
@@ -73,6 +75,22 @@ QEntity *Scene::createScene() {
 }
 
 void Scene::setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
+    if (xStart > xEnd) {
+        int temp = xEnd;
+        xEnd = xStart;
+        xStart = temp;
+    }
+    if (zStart > zEnd) {
+        int temp = zEnd;
+        zEnd = zStart;
+        zStart = temp;
+    }
+    if (yStart < yEnd) {
+        int temp = yEnd;
+        yEnd = yStart;
+        yStart = temp;
+    }
+
     this->xStart = xStart;
     this->xEnd = xEnd;
     this->yStart = yStart;
@@ -187,11 +205,12 @@ void Scene::createAnimationParts() {
 void Scene::checkIntersects() {
     QVector3D trans = knife->knifeTransform->translation();
     float xKnifePos;
+
     if (animationParts[currentPart]->delta.x() > 0)
         xKnifePos = trans.x() - knife->knifeFigure->xExtent() / 2;
     else
         xKnifePos = trans.x() + knife->knifeFigure->xExtent() / 2 - 0.1f;
-    float yKnifePos = trans.y() - knife->knifeFigure->yExtent() / 2 + 0.5;
+    float yKnifePos = trans.y() - knife->knifeFigure->yExtent() / 2 + 0.48;
     float zKnifePos = trans.z();
 
     if (((xKnifePos >= xStart - 1) && (xKnifePos <= xEnd)) &&
@@ -215,7 +234,9 @@ void Scene::runMover() {
     if ( elapsedSteps < reqSteps )
         {
             moveKnife( &animPart->delta );
-            QTimer::singleShot( 10, this, &Scene::runMover );
+            //QTimer::singleShot( 10, this, &Scene::runMover );
+            //tmr->singleShot( 10, this, &Scene::runMover );
+            tmr->start(1);
             elapsedSteps++;
         }
     else {
@@ -254,9 +275,15 @@ void Scene::moveKnife(QVector3D *delta) {
     checkIntersects();
 }
 
-void Scene::startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
-    setAnimationBounds(xStart, xEnd, yStart, yEnd, zStart, zEnd);
-
+void Scene::startAutoAnimation() {
     createAnimationParts();
+    isAutoAnimationNow = true;
     runMover();
+}
+
+void Scene::startStepAnimation() {
+    if (!isStepAnimationNow)
+        createAnimationParts();
+    isStepAnimationNow = true;
+    runStepMover();
 }

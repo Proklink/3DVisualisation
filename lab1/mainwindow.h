@@ -54,6 +54,7 @@ private:
 private slots:
     void StartButtonClicked();
     void stopClicked();
+    void stepClicked();
 };
 
 #endif // MAINWINDOW_H

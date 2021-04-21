@@ -25,15 +25,23 @@ MainWindow::MainWindow(QWidget *parent)
       speedCombobox(new QComboBox()),
       scene(new Scene)
 {
-    xStart->addItems(GetItems(xSize, 0));
-    xFinish->addItems(GetItems(xSize, 0));
-    yStart->addItems(GetItems(ySize, 0));
-    yFinish->addItems(GetItems(ySize, 0));
-    zStart->addItems(GetItems(zSize, 0));
-    zFinish->addItems(GetItems(zSize, 0));
-    speedCombobox->addItem(QString::number(0.05f));
+    xStart->addItems(GetItems(xSize, 1));
+    xStart->setCurrentIndex(1);
+    xFinish->addItems(GetItems(xSize, 1));
+    xFinish->setCurrentIndex(3);
+    yStart->addItems(GetItems(ySize, 1));
+    yStart->setCurrentIndex(4);
+    yFinish->addItems(GetItems(ySize, 1));
+    yFinish->setCurrentIndex(2);
+    zStart->addItems(GetItems(zSize, 1));
+    zStart->setCurrentIndex(1);
+    zFinish->addItems(GetItems(zSize, 1));
+    zFinish->setCurrentIndex(3);
     speedCombobox->addItem(QString::number(0.01f));
+    speedCombobox->addItem(QString::number(0.05f));
+    speedCombobox->addItem(QString::number(0.5f));
     speedCombobox->addItem(QString::number(1.0f));
+    speedCombobox->setCurrentIndex(1);
 
     xStart->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     xFinish->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -62,8 +70,6 @@ MainWindow::MainWindow(QWidget *parent)
     layoutSpeed->addWidget(speedCombobox);
     layoutSpeed->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
-    connect(start, &QPushButton::clicked, this, &MainWindow::StartButtonClicked);
-
     view_widget = QWidget::createWindowContainer(&(scene->view));
 
     layout->addLayout(layoutX);
@@ -79,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(start, &QPushButton::clicked, this, &MainWindow::StartButtonClicked);
     connect(stop, &QPushButton::clicked, this, &MainWindow::stopClicked);
+    connect(step, &QPushButton::clicked, this, &MainWindow::stepClicked);
 }
 
 QStringList MainWindow::GetItems(int max, int min)
@@ -92,18 +99,60 @@ QStringList MainWindow::GetItems(int max, int min)
 
 void MainWindow::StartButtonClicked()
 {
-    scene->startTestAnimation(xStart->currentText().toInt(),
+    if (scene->knife->knifeTransform->translation() != scene->knife->basePosition)
+        stopClicked();
+    scene->discretShift = speedCombobox->currentText().toFloat();
+    scene->setAnimationBounds(xStart->currentText().toInt(),
                               xFinish->currentText().toInt(),
                               yStart->currentText().toInt(),
                               yFinish->currentText().toInt(),
                               zStart->currentText().toInt(),
                               zFinish->currentText().toInt());
-    scene->discretShift = speedCombobox->currentText().toInt();
+    scene->startAutoAnimation();
+
+}
+
+void MainWindow::stepClicked()
+{
+    scene->discretShift = speedCombobox->currentText().toFloat();
+    if (scene->isAutoAnimationNow) {
+        scene->tmr->stop();
+        scene->isStepAnimationNow = true;
+        scene->isAutoAnimationNow = false;
+    }
+
+    if (!scene->isStepAnimationNow)
+        scene->setAnimationBounds(xStart->currentText().toInt(),
+                                  xFinish->currentText().toInt(),
+                                  yStart->currentText().toInt(),
+                                  yFinish->currentText().toInt(),
+                                  zStart->currentText().toInt(),
+                                  zFinish->currentText().toInt());
+    scene->startStepAnimation();
+
 }
 
 void MainWindow::stopClicked() {
-    //emit signal for timer
+    //emit(scene->stopTmr());
+    scene->tmr->stop();
     scene->knife->knifeTransform->setTranslation(scene->knife->basePosition);
+    scene->discretShift = 0;
+    scene->elapsedSteps = 0;
+    scene->isStepAnimationNow = false;
+    scene->isAutoAnimationNow = false;
+    //std::cout << scene->knife->knifeTransform->translation().x() << " " << scene->knife->knifeTransform->translation().z() << " " <<scene->knife->knifeTransform->translation().y() << std::endl;
+    for (int i = 0; i < scene->animationParts.size(); i++) {
+        delete scene->animationParts[i];
+        scene->animationParts.erase(scene->animationParts.begin());
+        i--;
+    }
+    scene->currentPart = 0;
+    for (int i = 0; i < scene->billet->billet.size(); i++) {
+        for (int j = 0; j < scene->billet->billet[i].size(); j++)
+            for (int k = 0; k < scene->billet->billet[i][j].size(); k++)
+                scene->billet->billet[i][j][k]->setEnabled(true);
+    }
+
 
 }
 

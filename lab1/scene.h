@@ -55,20 +55,26 @@ public:
     virtual ~Scene();
 
     QEntity *createScene();
-    void moveKnife(QVector3D *delta);
-
+    void setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
+    void createAnimationParts();
     void prepareIntro();
     void backToStart(int xStart, int xEnd, int zStart, int zEnd);
-    void checkIntersects();
-    void startTestAnimation(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
-    void createAnimationParts();
-    void setAnimationBounds(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd);
 
+    void checkIntersects();
+
+    void startAutoAnimation();
+    void startStepAnimation();
+    void runStepMover();
+    void moveKnife(QVector3D *delta);
+
+
+    bool isStepAnimationNow = false;
+    bool isAutoAnimationNow = false;
 
 
 private slots:
     void runMover();
-    void runStepMover();
+
 
 
 signals:
